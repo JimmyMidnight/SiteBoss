@@ -1,0 +1,20 @@
+{
+  "name": "SiteBoss",
+  "short_name": "SiteBoss",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1C2530",
+  "theme_color": "#F5C400",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/F5C400/1C2530?text=SB",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/F5C400/1C2530?text=SB",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
