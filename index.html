@@ -5,15 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SiteBoss — Job Site Utility</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="manifest" href="data:application/manifest+json,{
-  &quot;name&quot;:&quot;SiteBoss&quot;,
-  &quot;short_name&quot;:&quot;SiteBoss&quot;,
-  &quot;start_url&quot;:&quot;.&quot;,
-  &quot;display&quot;:&quot;standalone&quot;,
-  &quot;background_color&quot;:&quot;#1C2530&quot;,
-  &quot;theme_color&quot;:&quot;#F5C400&quot;,
-  &quot;icons&quot;:[{&quot;src&quot;:&quot;https://via.placeholder.com/192x192/ F5C400/1C2530?text=SB&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/png&quot;},{&quot;src&quot;:&quot;https://via.placeholder.com/512x512/F5C400/1C2530?text=SB&quot;,&quot;sizes&quot;:&quot;512x512&quot;,&quot;type&quot;:&quot;image/png&quot;}]
-}">
+<link rel="manifest" href="manifest.json">
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
 <style>
   :root {
     --yellow: #F5C400;
