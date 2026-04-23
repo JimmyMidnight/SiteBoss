@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiteBoss — Job Site Utility</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="data:application/manifest+json,{
+  &quot;name&quot;:&quot;SiteBoss&quot;,
+  &quot;short_name&quot;:&quot;SiteBoss&quot;,
+  &quot;start_url&quot;:&quot;.&quot;,
+  &quot;display&quot;:&quot;standalone&quot;,
+  &quot;background_color&quot;:&quot;#1C2530&quot;,
+  &quot;theme_color&quot;:&quot;#F5C400&quot;,
+  &quot;icons&quot;:[{&quot;src&quot;:&quot;https://via.placeholder.com/192x192/ F5C400/1C2530?text=SB&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/png&quot;},{&quot;src&quot;:&quot;https://via.placeholder.com/512x512/F5C400/1C2530?text=SB&quot;,&quot;sizes&quot;:&quot;512x512&quot;,&quot;type&quot;:&quot;image/png&quot;}]
+}">
+<style>
+  :root {
+    --yellow: #F5C400;
+    --orange: #E8521A;
+    --steel: #1C2530;
+    --iron: #2E3D4F;
+    --slate: #3D5166;
+    --silver: #8BA3B8;
+    --light: #D6E4F0;
+    --white: #F2F7FA;
+    --green: #2ECC71;
+    --red: #E74C3C;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--steel);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: var(--yellow);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  }
+
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 30px;
+    color: var(--steel);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .logo span { color: var(--orange); }
+
+  .site-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--steel);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .tabs {
+    display: flex;
+    background: var(--iron);
+    overflow-x: auto;
+    border-bottom: 4px solid var(--yellow);
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex: 0 0 auto;
+    padding: 14px 20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--silver);
+    cursor: pointer;
+    border-bottom: 4px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+  .tab.active { color: var(--yellow); border-bottom-color: var(--yellow); background: rgba(245,196,0,0.1); }
+
+  .panel { display: none; padding: 20px; max-width: 740px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  .card {
+    background: var(--iron);
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 22px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  label {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 7px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    background: var(--steel);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    color: var(--white);
+    padding: 14px;
+    font-size: 17px;
+    outline: none;
+    transition: border 0.2s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--yellow); }
+
+  .field-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .field-group.three { grid-template-columns: 1fr 1fr 1fr; }
+  .field-group.one { grid-template-columns: 1fr; }
+
+  .btn {
+    background: var(--yellow);
+    color: var(--steel);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 24px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: #ffdb2e; transform: translateY(-2px); }
+  .btn-secondary { background: transparent; border: 2px solid var(--slate); color: var(--light); }
+  .btn-danger { background: var(--red); color: white; }
+
+  .result-box {
+    background: var(--steel);
+    border: 3px solid var(--yellow);
+    border-radius: 8px;
+    padding: 18px;
+    margin-top: 18px;
+    min-height: 70px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--yellow);
+  }
+
+  .result-label { font-size: 13px; color: var(--silver); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+
+  .result-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .result-chip {
+    background: var(--steel);
+    border: 1px solid var(--slate);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 15px;
+    color: var(--light);
+    min-width: 110px;
+  }
+  .result-chip strong { color: var(--yellow); font-size: 20px; display: block; }
+
+  .progress-bar {
+    background: var(--steel);
+    border-radius: 6px;
+    height: 12px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .progress-fill { height: 100%; background: var(--yellow); transition: width 0.4s ease; }
+
+  .timer-display {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 58px;
+    color: var(--yellow);
+    text-align: center;
+    padding: 24px 0;
+    letter-spacing: 6px;
+  }
+
+  .stud-visual {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 48px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    padding: 6px;
+    overflow-x: auto;
+    margin-top: 12px;
+  }
+  .stud-mark {
+    width: 6px;
+    background: var(--yellow);
+    border-radius: 3px;
+    transition: height 0.3s;
+  }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--silver); font-size: 15px; }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--silver);
+    padding: 20px;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 560px) {
+    .field-group.three { grid-template-columns: 1fr 1fr; }
+    .timer-display { font-size: 48px; letter-spacing: 3px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Site<span>Boss</span></div>
+  <div class="site-label">Built for the Trades • 100% Offline</div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('calc')">🔢 Calc</div>
+  <div class="tab" onclick="switchTab('convert')">⚖️ Convert</div>
+  <div class="tab" onclick="switchTab('stud')">📐 Stud/Pipe</div>
+  <div class="tab" onclick="switchTab('checklist')">✅ Punch</div>
+  <div class="tab" onclick="switchTab('timer')">⏱️ Timer</div>
+  <div class="tab" onclick="switchTab('notes')">📋 Notes</div>
+  <div class="tab" onclick="switchTab('ref')">📖 Quick Ref</div>
+</div>
+
+<!-- CALC PANEL -->
+<div id="panel-calc" class="panel active">
+  <!-- Area Calculator with feet-inch support -->
+  <div class="card">
+    <div class="card-title">📐 Area Calculator</div>
+    <div class="field-group">
+      <div>
+        <label>Shape</label>
+        <select id="area-shape" onchange="updateAreaInputs()">
+          <option value="rect">Rectangle</option>
+          <option value="triangle">Triangle</option>
+          <option value="circle">Circle</option>
+        </select>
+      </div>
+      <div>
+        <label>Unit</label>
+        <select id="area-unit" onchange="calcArea()">
+          <option value="ft">ft²</option>
+          <option value="in">in²</option>
+        </select>
+      </div>
+    </div>
+    <div id="area-inputs"></div>
+    <div class="result-box" id="area-result"><span style="color:#888">Enter dimensions (e.g. 12-6)</span></div>
+  </div>
+
+  <!-- Material Estimator -->
+  <div class="card">
+    <div class="card-title">🪣 Material Estimator</div>
+    <div class="field-group">
+      <div>
+        <label>Material</label>
+        <select id="mat-type" onchange="calcMaterial()">
+          <option value="concrete">Concrete (yd³)</option>
+          <option value="drywall">Drywall (4x8 sheets)</option>
+          <option value="paint">Paint (gallons)</option>
+          <option value="framing">Framing (board feet)</option>
+        </select>
+      </div>
+      <div>
+        <label>Waste % (typical 5-15)</label>
+        <input type="number" id="mat-waste" value="10" oninput="calcMaterial()">
+      </div>
+    </div>
+    <div class="field-group">
+      <div><label>Area (sq ft or ft-in)</label><input type="text" id="mat-area" placeholder="e.g. 12-6" oninput="calcMaterial()"></div>
+      <div><label id="mat-depth-label">Depth (in)</label><input type="number" id="mat-depth" value="4" oninput="calcMaterial()"></div>
+    </div>
+    <div class="result-box" id="mat-result"></div>
+  </div>
+</div>
+
+<!-- CONVERT PANEL (universal) -->
+<div id="panel-convert" class="panel">
+  <div class="card">
+    <div class="card-title">⚖️ Universal Converter</div>
+    <input type="text" id="conv-val" placeholder="Enter value (e.g. 10-6)" style="margin-bottom:16px" oninput="convertUniversal()">
+    <div class="result-box" id="convert-result"></div>
+  </div>
+</div>
+
+<!-- STUD / PIPE -->
+<div id="panel-stud" class="panel">
+  <div class="card">
+    <div class="card-title">🧱 Stud / Joist Layout</div>
+    <div class="field-group three">
+      <div><label>Wall Length (ft-in)</label><input type="text" id="stud-len" placeholder="12-0" oninput="calcStuds()"></div>
+      <div><label>Spacing</label>
+        <select id="stud-spacing" onchange="calcStuds()">
+          <option value="16" selected>16" OC</option>
+          <option value="12">12" OC</option>
+          <option value="24">24" OC</option>
+        </select>
+      </div>
+      <div><label>Plates</label>
+        <select id="stud-plates" onchange="calcStuds()">
+          <option value="2" selected>2 plates</option>
+          <option value="3">3 plates</option>
+        </select>
+      </div>
+    </div>
+    <div class="result-box" id="stud-result"></div>
+    <div class="stud-visual" id="stud-visual"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔧 Pipe / Conduit Offset</div>
+    <div class="field-group three">
+      <div><label>Offset (in)</label><input type="number" id="pipe-offset" value="6" oninput="calcPipe()"></div>
+      <div><label>Angle</label>
+        <select id="pipe-angle" onchange="calcPipe()">
+          <option value="45" selected>45°</option>
+          <option value="30">30°</option>
+          <option value="60">60°</option>
+        </select>
+      </div>
+    </div>
+    <div class="result-box" id="pipe-result"></div>
+  </div>
+</div>
+
+<!-- PUNCH LIST -->
+<div id="panel-checklist" class="panel">
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between">
+      <span>✅ Punch List</span>
+      <span id="check-progress-label" style="background:var(--slate);padding:6px 12px;border-radius:6px;font-size:14px">0/0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="check-progress" style="width:0%"></div></div>
+
+    <div id="checklist-items" style="max-height:420px;overflow-y:auto;margin:16px 0;"></div>
+
+    <div class="field-group">
+      <div><input type="text" id="new-check-text" placeholder="Add new item (e.g. Fix outlet cover)" onkeydown="if(event.key==='Enter') addCheckItem()"></div>
+      <div><button class="btn" onclick="addCheckItem()">+ Add</button></div>
+    </div>
+    <button class="btn btn-secondary" style="width:100%" onclick="exportPunchList()">📤 Export Punch List</button>
+  </div>
+</div>
+
+<!-- TIMER -->
+<div id="panel-timer" class="panel">
+  <div class="card">
+    <div class="card-title">⏱️ Task Timer</div>
+    <div class="field-group">
+      <div><label>Task / Phase</label><input type="text" id="timer-task" placeholder="Rough-in plumbing"></div>
+    </div>
+    <div class="timer-display" id="timer-display">00:00:00</div>
+    <div style="text-align:center;margin-top:16px">
+      <button class="btn" id="timer-btn" onclick="toggleTimer()">▶ Start</button>
+      <button class="btn btn-secondary" onclick="lapTimer()" style="margin:0 8px">Lap / Log</button>
+      <button class="btn btn-danger" onclick="resetTimer()">Reset</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between">
+      <span>📋 Time Log</span>
+      <span id="total-time-badge" style="background:var(--yellow);color:var(--steel);padding:6px 12px;border-radius:6px">Total: 0h</span>
+    </div>
+    <div id="timer-log" style="max-height:320px;overflow-y:auto"></div>
+    <button class="btn btn-secondary" style="width:100%;margin-top:16px" onclick="exportTimerLog()">📤 Copy Log</button>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div id="panel-notes" class="panel">
+  <div class="card">
+    <div class="card-title">📋 Field Notes</div>
+    <div class="field-group">
+      <div><label>Title</label><input type="text" id="note-title" placeholder="Wall 3 measurements"></div>
+    </div>
+    <textarea id="note-body" rows="6" placeholder="Enter notes here..."></textarea>
+    <button class="btn" style="width:100%;margin-top:14px" onclick="saveNote()">💾 Save Note</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Saved Notes</div>
+    <div id="notes-list" style="max-height:400px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- QUICK REF -->
+<div id="panel-ref" class="panel">
+  <div class="card">
+    <div class="card-title">📖 Quick Job Site Reference</div>
+    <div style="line-height:1.7;font-size:15px">
+      <strong>Typical Waste Factors:</strong><br>
+      • Concrete: 5%<br>
+      • Drywall / Framing: 10%<br>
+      • Paint / Flooring: 8-12%<br>
+      • Roofing: 10-15%<br><br>
+      <strong>Common Stud Spacing:</strong> 16" OC (most walls), 24" OC (non-load bearing)<br><br>
+      <strong>Standard 2x4 Wall Height:</strong> 92-5/8" (pre-cut studs)<br><br>
+      <strong>Concrete Slab Rule of Thumb:</strong> 1 yard³ covers ~80 sq ft @ 4" thick<br><br>
+      <strong>Tip:</strong> Always add 5-10% contingency on top of waste.
+    </div>
+  </div>
+</div>
+
+<div class="footer-note">
+  SiteBoss v2 • 100% Offline • Data saved locally on your device<br>
+  Built for dirty hands and real job sites. Pass it on.
+</div>
+
+<script>
+// ================== TAB SWITCHING ==================
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ================== FEET-INCH PARSER ==================
+function parseFeetInches(input) {
+  if (!input) return 0;
+  input = input.toString().trim().toLowerCase();
+  // Handle 8-6, 8'6", 8 ft 6 in, 102.5
+  let totalInches = 0;
+  const ftMatch = input.match(/(\d+)-?(\d*)/);
+  if (ftMatch) {
+    const feet = parseFloat(ftMatch[1]) || 0;
+    const inches = parseFloat(ftMatch[2]) || 0;
+    totalInches = feet * 12 + inches;
+  } else {
+    totalInches = parseFloat(input) || 0;
+  }
+  return totalInches;
+}
+
+// ================== AREA CALCULATOR ==================
+function updateAreaInputs() {
+  const shape = document.getElementById('area-shape').value;
+  const container = document.getElementById('area-inputs');
+  let html = '';
+  if (shape === 'rect') {
+    html = `<div class="field-group"><div><label>Length (ft-in)</label><input type="text" id="a-len" oninput="calcArea()"></div><div><label>Width (ft-in)</label><input type="text" id="a-wid" oninput="calcArea()"></div></div>`;
+  } else if (shape === 'triangle') {
+    html = `<div class="field-group"><div><label>Base</label><input type="text" id="a-base" oninput="calcArea()"></div><div><label>Height</label><input type="text" id="a-hgt" oninput="calcArea()"></div></div>`;
+  } else if (shape === 'circle') {
+    html = `<div class="field-group"><div><label>Radius (ft-in)</label><input type="text" id="a-rad" oninput="calcArea()"></div></div>`;
+  }
+  container.innerHTML = html;
+  calcArea();
+}
+
+function calcArea() {
+  const shape = document.getElementById('area-shape').value;
+  let areaSqIn = 0;
+  if (shape === 'rect') {
+    const l = parseFeetInches(document.getElementById('a-len').value);
+    const w = parseFeetInches(document.getElementById('a-wid').value);
+    areaSqIn = l * w;
+  } else if (shape === 'triangle') {
+    const b = parseFeetInches(document.getElementById('a-base').value);
+    const h = parseFeetInches(document.getElementById('a-hgt').value);
+    areaSqIn = 0.5 * b * h;
+  } else if (shape === 'circle') {
+    const r = parseFeetInches(document.getElementById('a-rad').value);
+    areaSqIn = Math.PI * r * r;
+  }
+  const unit = document.getElementById('area-unit').value;
+  const area = unit === 'ft' ? (areaSqIn / 144).toFixed(2) : areaSqIn.toFixed(0);
+  const unitLabel = unit === 'ft' ? 'ft²' : 'in²';
+  document.getElementById('area-result').innerHTML = area > 0 
+    ? `<div class="result-label">Total Area</div>${area} ${unitLabel}` 
+    : `<span style="color:#888">Enter dimensions (e.g. 12-6)</span>`;
+}
+
+// ================== MATERIAL ESTIMATOR ==================
+function calcMaterial() {
+  const type = document.getElementById('mat-type').value;
+  const areaInput = document.getElementById('mat-area').value;
+  const areaSqFt = parseFeetInches(areaInput) / 12; // rough conversion if feet-inch entered
+  const waste = parseFloat(document.getElementById('mat-waste').value) || 10;
+  const depth = parseFloat(document.getElementById('mat-depth').value) || 4;
+  let resultText = '';
+
+  if (type === 'concrete') {
+    const yd3 = (areaSqFt * (depth / 12) / 27) * (1 + waste/100);
+    resultText = `${yd3.toFixed(2)} yd³ concrete`;
+  } else if (type === 'drywall') {
+    const sheets = Math.ceil((areaSqFt * (1 + waste/100)) / 32);
+    resultText = `${sheets} sheets (4×8)`;
+  } else if (type === 'paint') {
+    const gal = Math.ceil((areaSqFt / 350) * (1 + waste/100));
+    resultText = `${gal} gallons (1 coat)`;
+  } else if (type === 'framing') {
+    const bf = Math.ceil(areaSqFt * 1.2); // rough board feet estimate
+    resultText = `~${bf} board feet`;
+  }
+
+  document.getElementById('mat-result').innerHTML = areaSqFt > 0 
+    ? `<div class="result-label">${document.getElementById('mat-type').options[document.getElementById('mat-type').selectedIndex].text}</div>${resultText}<br><small style="color:#aaa">+${waste}% waste included</small>`
+    : `<span style="color:#888">Enter area</span>`;
+}
+
+// ================== STUD LAYOUT ==================
+function calcStuds() {
+  const lenStr = document.getElementById('stud-len').value;
+  const lenIn = parseFeetInches(lenStr);
+  if (lenIn <= 0) {
+    document.getElementById('stud-result').innerHTML = `<span style="color:#888">Enter wall length</span>`;
+    document.getElementById('stud-visual').innerHTML = '';
+    return;
+  }
+  const spacing = parseFloat(document.getElementById('stud-spacing').value);
+  const plates = parseInt(document.getElementById('stud-plates').value);
+
+  let studs = Math.ceil(lenIn / spacing) + 1;
+  const plateLF = plates * Math.ceil(lenIn / 96) * 8;
+  const totalLF = studs * 8 + plateLF;
+
+  document.getElementById('stud-result').innerHTML = `
+    <div class="result-label">Lumber Needed</div>
+    <div class="result-row">
+      <div class="result-chip"><strong>${studs}</strong> Studs (8ft)</div>
+      <div class="result-chip"><strong>${totalLF}</strong> LF Total</div>
+    </div>`;
+
+  // Visual
+  const visual = document.getElementById('stud-visual');
+  visual.innerHTML = '';
+  const count = Math.min(20, studs);
+  for (let i = 0; i < count; i++) {
+    const h = 28 + Math.random() * 18;
+    const div = document.createElement('div');
+    div.className = 'stud-mark';
+    div.style.height = h + 'px';
+    visual.appendChild(div);
+  }
+}
+
+// ================== PIPE OFFSET ==================
+function calcPipe() {
+  const offset = parseFloat(document.getElementById('pipe-offset').value) || 0;
+  const angle = parseFloat(document.getElementById('pipe-angle').value);
+  if (offset <= 0) {
+    document.getElementById('pipe-result').innerHTML = `<span style="color:#888">Enter offset</span>`;
+    return;
+  }
+  const rad = angle * Math.PI / 180;
+  const travel = offset / Math.sin(rad);
+  const shrink = offset * (angle === 45 ? 0.375 : angle === 30 ? 0.25 : 0.5);
+  document.getElementById('pipe-result').innerHTML = `
+    <div class="result-label">Offset Results</div>
+    <div class="result-row">
+      <div class="result-chip"><strong>${travel.toFixed(2)}"</strong> Travel</div>
+      <div class="result-chip"><strong>${shrink.toFixed(2)}"</strong> Shrink</div>
+    </div>`;
+}
+
+// ================== UNIVERSAL CONVERTER ==================
+function convertUniversal() {
+  const val = parseFeetInches(document.getElementById('conv-val').value);
+  if (val <= 0) {
+    document.getElementById('convert-result').innerHTML = `<span style="color:#888">Enter value</span>`;
+    return;
+  }
+  document.getElementById('convert-result').innerHTML = `
+    <div class="result-label">Quick Conversions</div>
+    <div class="result-row">
+      <div class="result-chip"><strong>${(val/12).toFixed(2)}</strong> ft</div>
+      <div class="result-chip"><strong>${val.toFixed(1)}</strong> in</div>
+      <div class="result-chip"><strong>${(val*2.54).toFixed(1)}</strong> cm</div>
+    </div>`;
+}
+
+// ================== PUNCH LIST (with persistence) ==================
+let checkItems = JSON.parse(localStorage.getItem('siteboss_punch')) || [
+  {id:1, text:'Permits posted', done:false},
+  {id:2, text:'PPE on site', done:false},
+  {id:3, text:'Rough plumbing inspected', done:false}
+];
+
+function savePunchList() {
+  localStorage.setItem('siteboss_punch', JSON.stringify(checkItems));
+}
+
+function renderChecklist() {
+  const container = document.getElementById('checklist-items');
+  const done = checkItems.filter(i => i.done).length;
+  document.getElementById('check-progress-label').textContent = `${done}/${checkItems.length}`;
+  document.getElementById('check-progress').style.width = (done / checkItems.length * 100) + '%';
+
+  container.innerHTML = checkItems.map(item => `
+    <div onclick="toggleCheck(${item.id})" style="padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:14px;cursor:pointer;${item.done?'opacity:0.65':''}">
+      <div style="width:28px;height:28px;border:3px solid #666;border-radius:6px;display:flex;align-items:center;justify-content:center;background:${item.done?'#2ECC71':'transparent'};color:white;font-size:18px">${item.done?'✓':''}</div>
+      <div style="${item.done?'text-decoration:line-through':''}">${item.text}</div>
+    </div>
+  `).join('');
+}
+
+function toggleCheck(id) {
+  const item = checkItems.find(i => i.id === id);
+  if (item) item.done = !item.done;
+  savePunchList();
+  renderChecklist();
+}
+
+function addCheckItem() {
+  const text = document.getElementById('new-check-text').value.trim();
+  if (!text) return;
+  checkItems.push({id: Date.now(), text, done: false});
+  document.getElementById('new-check-text').value = '';
+  savePunchList();
+  renderChecklist();
+}
+
+function exportPunchList() {
+  if (!checkItems.length) return alert('No items to export');
+  const text = checkItems.map(i => `${i.done ? '✓' : '□'} ${i.text}`).join('\n');
+  navigator.clipboard.writeText('SiteBoss Punch List\n' + text).then(() => alert('Punch list copied to clipboard!'));
+}
+
+// ================== TIMER (with persistence) ==================
+let timerSeconds = 0, timerRunning = false, timerInterval = null;
+let timerLog = JSON.parse(localStorage.getItem('siteboss_timerlog')) || [];
+let totalLoggedSeconds = timerLog.reduce((sum, entry) => sum + (entry.seconds || 0), 0);
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function updateTimerDisplay() {
+  const h = Math.floor(timerSeconds / 3600);
+  const m = Math.floor((timerSeconds % 3600) / 60);
+  const s = timerSeconds % 60;
+  document.getElementById('timer-display').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('timer-btn');
+  if (!timerRunning) {
+    timerRunning = true;
+    btn.textContent = '⏸ Pause';
+    timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+  } else {
+    timerRunning = false;
+    btn.textContent = '▶ Resume';
+    clearInterval(timerInterval);
+  }
+}
+
+function lapTimer() {
+  if (timerSeconds === 0) return;
+  const task = document.getElementById('timer-task').value.trim() || 'Unnamed Task';
+  const timeStr = document.getElementById('timer-display').textContent;
+  timerLog.unshift({task, timeStr, seconds: timerSeconds, date: new Date().toLocaleDateString()});
+  totalLoggedSeconds += timerSeconds;
+  timerSeconds = 0;
+  updateTimerDisplay();
+  saveTimerLog();
+  renderTimerLog();
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = 0;
+  timerRunning = false;
+  document.getElementById('timer-btn').textContent = '▶ Start';
+  updateTimerDisplay();
+}
+
+function saveTimerLog() {
+  localStorage.setItem('siteboss_timerlog', JSON.stringify(timerLog));
+}
+
+function renderTimerLog() {
+  const el = document.getElementById('timer-log');
+  if (!timerLog.length) {
+    el.innerHTML = `<div class="empty-state">No tasks logged yet</div>`;
+    return;
+  }
+  const totalH = Math.floor(totalLoggedSeconds / 3600);
+  document.getElementById('total-time-badge').textContent = `Total: ${totalH}h`;
+  el.innerHTML = timerLog.map(entry => `
+    <div style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between">
+      <div>
+        <div>${entry.task}</div>
+        <small style="color:var(--silver)">${entry.date}</small>
+      </div>
+      <div style="color:var(--yellow);font-weight:700">${entry.timeStr}</div>
+    </div>
+  `).join('');
+}
+
+function exportTimerLog() {
+  if (!timerLog.length) return alert('No log to export');
+  const text = timerLog.map(e => `${e.date} | ${e.task} — ${e.timeStr}`).join('\n');
+  navigator.clipboard.writeText('SiteBoss Time Log\n' + text).then(() => alert('Timer log copied!'));
+}
+
+// ================== NOTES (with persistence) ==================
+let notes = JSON.parse(localStorage.getItem('siteboss_notes')) || [];
+
+function saveNote() {
+  const title = document.getElementById('note-title').value.trim() || 'Untitled';
+  const body = document.getElementById('note-body').value.trim();
+  if (!body) return alert('Enter a note body');
+  notes.unshift({id: Date.now(), title, body, date: new Date().toLocaleString()});
+  localStorage.setItem('siteboss_notes', JSON.stringify(notes));
+  document.getElementById('note-title').value = '';
+  document.getElementById('note-body').value = '';
+  renderNotes();
+}
+
+function renderNotes() {
+  const el = document.getElementById('notes-list');
+  if (!notes.length) {
+    el.innerHTML = `<div class="empty-state">No notes saved yet</div>`;
+    return;
+  }
+  el.innerHTML = notes.map(n => `
+    <div style="padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.1)">
+      <strong>${n.title}</strong><br>
+      <small style="color:var(--silver)">${n.date}</small><br>
+      <div style="margin-top:8px;white-space:pre-wrap">${n.body}</div>
+    </div>
+  `).join('');
+}
+
+// ================== INITIALIZATION ==================
+function init() {
+  updateAreaInputs();
+  calcMaterial();
+  calcStuds();
+  calcPipe();
+  renderChecklist();
+  renderTimerLog();
+  renderNotes();
+
+  // Service worker registration (basic offline PWA support)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('data:application/javascript,').catch(() => {});
+  }
+}
+
+init();
+</script>
+
+</body>
+</html>
