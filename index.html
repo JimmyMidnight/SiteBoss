@@ -513,16 +513,24 @@ function switchTab(tab, el) {
 function parseFeetInches(input) {
   if (!input) return 0;
   input = input.toString().trim().toLowerCase();
-  // Handle 8-6, 8'6", 8 ft 6 in, 102.5
   let totalInches = 0;
-  const ftMatch = input.match(/(\d+)-?(\d*)/);
-  if (ftMatch) {
-    const feet = parseFloat(ftMatch[1]) || 0;
-    const inches = parseFloat(ftMatch[2]) || 0;
-    totalInches = feet * 12 + inches;
-  } else {
-    totalInches = parseFloat(input) || 0;
+
+  // Extract fraction if present (e.g. 3/8)
+  let fraction = 0;
+  const fracMatch = input.match(/(\d+)\/(\d+)/);
+  if (fracMatch) {
+    fraction = parseFloat(fracMatch[1]) / parseFloat(fracMatch[2]);
+    input = input.replace(fracMatch[0], '').trim().replace(/-$/, '').trim();
   }
+
+  // Now parse remaining feet-inches (e.g. 100-6 or 6)
+  const parts = input.split('-').map(p => parseFloat(p) || 0);
+  if (parts.length >= 2) {
+    totalInches = parts[0] * 12 + parts[1] + fraction;
+  } else if (parts.length === 1) {
+    totalInches = parts[0] + fraction;
+  }
+
   return totalInches;
 }
 
