@@ -569,7 +569,7 @@ function calcArea() {
 function calcMaterial() {
   const type = document.getElementById('mat-type').value;
   const areaInput = document.getElementById('mat-area').value;
-  const areaSqFt = parseFeetInches(areaInput) / 12; // rough conversion if feet-inch entered
+  const areaSqFt = parseFloat(areaInput) || 0; // rough conversion if feet-inch entered
   const waste = parseFloat(document.getElementById('mat-waste').value) || 10;
   const depth = parseFloat(document.getElementById('mat-depth').value) || 4;
   let resultText = '';
