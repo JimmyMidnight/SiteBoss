@@ -513,26 +513,31 @@ function switchTab(tab, el) {
 function parseFeetInches(input) {
   if (!input) return 0;
   input = input.toString().trim().toLowerCase();
-  let totalInches = 0;
-
+  
   // Extract fraction if present (e.g. 3/8)
   let fraction = 0;
   const fracMatch = input.match(/(\d+)\/(\d+)/);
   if (fracMatch) {
     fraction = parseFloat(fracMatch[1]) / parseFloat(fracMatch[2]);
-    input = input.replace(fracMatch[0], '').trim().replace(/-$/, '').trim();
+    input = input.replace(fracMatch[0], '');
   }
 
-  // Now parse remaining feet-inches (e.g. 100-6 or 6)
- const parts = input.split('-').filter(p => p.trim() !== '').map(p => parseFloat(p) || 0);
-if (parts.length >= 2) {
-  totalInches = parts[0] * 12 + parts[1] + fraction;
-} else if (parts.length === 1 && parts[0] >= 12) {
-  totalInches = parts[0] + fraction;
-} else if (parts.length === 1) {
-  totalInches = parts[0] + fraction;
-} else {
-  totalInches = fraction;
+  // Clean up trailing dashes and spaces
+  input = input.replace(/-+$/, '').replace(/\s+$/, '').trim();
+
+  // Parse feet and inches
+  const parts = input.split('-').filter(p => p.trim() !== '').map(p => parseFloat(p) || 0);
+  
+  let totalInches = 0;
+  if (parts.length >= 2) {
+    totalInches = parts[0] * 12 + parts[1] + fraction;
+  } else if (parts.length === 1) {
+    totalInches = parts[0] + fraction;
+  } else {
+    totalInches = fraction;
+  }
+
+  return totalInches;
 }
 
 // ================== AREA CALCULATOR ==================
