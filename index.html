@@ -679,7 +679,7 @@ function renderChecklist() {
   const container = document.getElementById('checklist-items');
   const done = checkItems.filter(i => i.done).length;
   document.getElementById('check-progress-label').textContent = `${done}/${checkItems.length}`;
-  document.getElementById('check-progress').style.width = (done / checkItems.length * 100) + '%';
+  document.getElementById('check-progress').style.width = (checkItems.length === 0 ? 0 : done / checkItems.length * 100) + '%';
 
   container.innerHTML = checkItems.map(item => `
     <div onclick="toggleCheck(${item.id})" style="padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:14px;cursor:pointer;${item.done?'opacity:0.65':''}">
