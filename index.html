@@ -673,7 +673,7 @@ function convertUniversal() {
     <div class="result-label">Quick Conversions</div>
     <div class="result-row">
       <div class="result-chip"><strong>${(val/12).toFixed(2)}</strong> ft</div>
-      <div class="result-chip"><strong>${val.toFixed(1)}</strong> in</div>
+      <div class="result-chip"><strong>${val.toFixed(3).replace(/\.?0+$/, '')}</strong> in</div>
       <div class="result-chip"><strong>${(val*2.54).toFixed(1)}</strong> cm</div>
     </div>`;
 }
