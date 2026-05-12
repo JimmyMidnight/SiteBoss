@@ -1,4 +1,4 @@
-const CACHE = 'siteboss-v1';
+const CACHE = 'siteboss-v2';
 const FILES = ['./', './index.html'];
 
 self.addEventListener('install', e => {
