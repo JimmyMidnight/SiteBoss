@@ -211,23 +211,6 @@
     letter-spacing: 6px;
   }
 
-  .stud-visual {
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    height: 48px;
-    background: rgba(0,0,0,0.3);
-    border-radius: 6px;
-    padding: 6px;
-    overflow-x: auto;
-    margin-top: 12px;
-  }
-  .stud-mark {
-    width: 6px;
-    background: var(--yellow);
-    border-radius: 3px;
-    transition: height 0.3s;
-  }
 
   .empty-state { text-align: center; padding: 40px 20px; color: var(--silver); font-size: 15px; }
 
@@ -351,7 +334,6 @@
       </div>
     </div>
     <div class="result-box" id="stud-result"></div>
-    <div class="stud-visual" id="stud-visual"></div>
   </div>
 
   <div class="card">
@@ -636,17 +618,6 @@ function calcStuds() {
       <div class="result-chip"><strong>${totalLF}</strong> LF Total</div>
     </div>`;
 
-  // Visual
-  const visual = document.getElementById('stud-visual');
-  visual.innerHTML = '';
-  const count = Math.min(20, studs);
-  for (let i = 0; i < count; i++) {
-    const h = 28 + Math.random() * 18;
-    const div = document.createElement('div');
-    div.className = 'stud-mark';
-    div.style.height = h + 'px';
-    visual.appendChild(div);
-  }
 }
 
 // ================== PIPE OFFSET ==================
