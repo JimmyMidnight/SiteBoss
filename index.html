@@ -685,10 +685,7 @@ function convertUniversal() {
 }
 
 // ================== PUNCH LIST (with persistence) ==================
-let checkItems = JSON.parse(localStorage.getItem('siteboss_punch')) || [
-  {id:1, text:'Permits posted', done:false},
-  {id:2, text:'PPE on site', done:false},
-  {id:3, text:'Rough plumbing inspected', done:false}
+let checkItems = JSON.parse(localStorage.getItem('siteboss_punch')) || [];
 ];
 
 function savePunchList() {
