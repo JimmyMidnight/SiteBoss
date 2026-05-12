@@ -319,7 +319,13 @@
 <div id="panel-convert" class="panel">
   <div class="card">
     <div class="card-title">⚖️ Universal Converter</div>
-    <input type="text" id="conv-val" placeholder="Enter value (e.g. 10-6)" style="margin-bottom:16px" oninput="convertUniversal()">
+<p style="font-size:13px;color:var(--silver);margin-bottom:12px;line-height:1.7">
+  Enter measurements in any of these formats:<br>
+  <span style="color:var(--light)">10</span> — inches only &nbsp;|&nbsp;
+  <span style="color:var(--light)">10-6</span> — feet &amp; inches &nbsp;|&nbsp;
+  <span style="color:var(--light)">10-6-3/8</span> — feet, inches &amp; fraction
+</p>
+<input type="text" id="conv-val" placeholder="e.g. 10-6-3/8" style="margin-bottom:16px" oninput="convertUniversal()">
     <div class="result-box" id="convert-result"></div>
   </div>
 </div>
