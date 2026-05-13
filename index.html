@@ -317,22 +317,32 @@
 <div id="panel-stud" class="panel">
   <div class="card">
     <div class="card-title">🧱 Stud / Joist Layout</div>
-    <div class="field-group three">
-      <div><label>Wall Length (ft-in)</label><input type="text" id="stud-len" placeholder="12-0" oninput="calcStuds()"></div>
-      <div><label>Spacing</label>
-        <select id="stud-spacing" onchange="calcStuds()">
-          <option value="16" selected>16" OC</option>
-          <option value="12">12" OC</option>
-          <option value="24">24" OC</option>
-        </select>
-      </div>
-      <div><label>Plates</label>
-        <select id="stud-plates" onchange="calcStuds()">
-          <option value="2" selected>2 plates</option>
-          <option value="3">3 plates</option>
-        </select>
-      </div>
-    </div>
+   <div class="field-group three">
+  <div><label>Wall Length (ft-in)</label><input type="text" id="stud-len" placeholder="12-0" oninput="calcStuds()"></div>
+  <div><label>Wall Height</label>
+    <select id="stud-height" onchange="calcStuds()">
+      <option value="8" selected>8 ft</option>
+      <option value="9">9 ft</option>
+      <option value="10">10 ft</option>
+      <option value="12">12 ft</option>
+    </select>
+  </div>
+  <div><label>Spacing</label>
+    <select id="stud-spacing" onchange="calcStuds()">
+      <option value="16" selected>16" OC</option>
+      <option value="12">12" OC</option>
+      <option value="24">24" OC</option>
+    </select>
+  </div>
+</div>
+<div class="field-group three">
+  <div><label>Plates</label>
+    <select id="stud-plates" onchange="calcStuds()">
+      <option value="2" selected>2 plates</option>
+      <option value="3">3 plates</option>
+    </select>
+  </div>
+</div>
     <div class="result-box" id="stud-result"></div>
   </div>
 
@@ -601,23 +611,22 @@ function calcStuds() {
   const lenIn = parseFeetInches(lenStr);
   if (lenIn <= 0) {
     document.getElementById('stud-result').innerHTML = `<span style="color:#888">Enter wall length</span>`;
-    document.getElementById('stud-visual').innerHTML = '';
     return;
   }
+  const height = parseInt(document.getElementById('stud-height').value);
   const spacing = parseFloat(document.getElementById('stud-spacing').value);
   const plates = parseInt(document.getElementById('stud-plates').value);
 
   let studs = Math.ceil(lenIn / spacing) + 1;
   const plateLF = plates * Math.ceil(lenIn / 96) * 8;
-  const totalLF = studs * 8 + plateLF;
+  const totalLF = studs * height + plateLF;
 
   document.getElementById('stud-result').innerHTML = `
     <div class="result-label">Lumber Needed</div>
     <div class="result-row">
-      <div class="result-chip"><strong>${studs}</strong> Studs (8ft)</div>
+      <div class="result-chip"><strong>${studs}</strong> Studs (${height}ft)</div>
       <div class="result-chip"><strong>${totalLF}</strong> LF Total</div>
     </div>`;
-
 }
 
 // ================== PIPE OFFSET ==================
